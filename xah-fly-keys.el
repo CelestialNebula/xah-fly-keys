@@ -2572,7 +2572,6 @@ Version 2020-09-24 2021-01-21"
         ($outBuffer "*xah-run output*")
         (resize-mini-windows nil)
         ($suffixMap xah-run-current-file-map)
-        (xah-run-current-file-after-hook 'xah-fly-command-mode-activate)
         $fname
         $fSuffix
         $progName
@@ -2598,7 +2597,8 @@ Version 2020-09-24 2021-01-21"
             (progn
               (message "Running")
               (shell-command $cmdStr $outBuffer ))
-          (error "No recognized program file suffix for this file."))))
+          (error "No recognized program file suffix for this file"))))
+    (xah-fly-command-mode-activate)
     (run-hooks 'xah-run-current-file-after-hook)))
 
 (defun xah-clean-empty-lines ()
@@ -3797,28 +3797,29 @@ Version 2017-01-29"
 (defcustom xah-fly-key-current-layout nil
   "The current keyboard layout. Use `xah-fly-keys-set-layout' to set the layout.
 If the value is nil, it's automatically set to \"dvorak\"."
-  :type '(choice  (const :tag "Adnw" adnw)
-                  (const :tag "AZERTY" azerty)
-                  (const :tag "Belgian AZERTY" azerty-be)
-                  (const :tag "BEOPY" beopy)
-                  (const :tag "BEPO" bepo)
-                  (const :tag "Carpalx QFMLWY" carpalx-qfmlwy)
-                  (const :tag "Carpalx QGMLWB" carpalx-qgmlwb)
-                  (const :tag "Carpalx QGMLWY" carpalx-qgmlwy)
-                  (const :tag "Colemak" colemak)
-                  (const :tag "Colemak Mod-DH" colemak-mod-dh)
-                  (const :tag "New Colemak Mod-DH with M on the home row" colemak-mod-dh-new)
-                  (const :tag "Dvorak" dvorak)
-                  (const :tag "Programmer Dvorak" programer-dvorak)
-                  (const :tag "Koy" koy)
-                  (const :tag "Neo2" neo2)
-                  (const :tag "Norman" norman)
-                  (const :tag "PT-nativo" pt-nativo)
-                  (const :tag "QWERTY" qwerty)
-                  (const :tag "Portuguese QWERTY (ABNT)" qwerty-abnt)
-                  (const :tag "QWERTY Norwegian" qwerty-no)
-                  (const :tag "QWERTZ" qwertz)
-                  (const :tag "Workman" workman))
+  :type '(choice
+          (const :tag "Adnw" adnw)
+          (const :tag "AZERTY" azerty)
+          (const :tag "Belgian AZERTY" azerty-be)
+          (const :tag "BEOPY" beopy)
+          (const :tag "BEPO" bepo)
+          (const :tag "Carpalx QFMLWY" carpalx-qfmlwy)
+          (const :tag "Carpalx QGMLWB" carpalx-qgmlwb)
+          (const :tag "Carpalx QGMLWY" carpalx-qgmlwy)
+          (const :tag "Colemak" colemak)
+          (const :tag "Colemak Mod-DH" colemak-mod-dh)
+          (const :tag "New Colemak Mod-DH with M on the home row" colemak-mod-dh-new)
+          (const :tag "Dvorak" dvorak)
+          (const :tag "Programmer Dvorak" programer-dvorak)
+          (const :tag "Koy" koy)
+          (const :tag "Neo2" neo2)
+          (const :tag "Norman" norman)
+          (const :tag "PT-nativo" pt-nativo)
+          (const :tag "QWERTY" qwerty)
+          (const :tag "Portuguese QWERTY (ABNT)" qwerty-abnt)
+          (const :tag "QWERTY Norwegian" qwerty-no)
+          (const :tag "QWERTZ" qwertz)
+          (const :tag "Workman" workman))
   :group 'xah-fly-keys
   :set (lambda (@layout-var @new-layout)
          ;; Only reload xah-fly-keys if it was already loaded and the new layout is different:
