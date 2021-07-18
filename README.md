@@ -5,7 +5,7 @@ A modal keybinding for emacs (like vim), but based on command frequency and ergo
 
 This is the most efficient editing system in the universe.
 
-home page at
+Home page:
 http://ergoemacs.org/misc/ergoemacs_vi_mode.html
 
 2020-04-18 News: Key Engine Rewrite
@@ -16,13 +16,13 @@ Major key engine rewrite by Dan Langlois (https://github.com/DanLanglois) and Wi
 The old stable version is available at
 http://ergoemacs.org/misc/i/xah-fly-keys_old_2020-04-18.el
 
-QWERTY layout
--------------------
-![xah-fly-keys qwerty layout](xah_fly_keys_qwerty_layout_2020-04-18_4fgyk.png)
-
 DVORAK layout
 -------------------
 ![xah-fly-keys dvorak layout](xah_fly_keys_dvorak_layout_2020-04-18_3bn3f.png)
+
+QWERTY layout
+-------------------
+![xah-fly-keys qwerty layout](xah_fly_keys_qwerty_layout_2020-04-18_4fgyk.png)
 
 Neo2 layout
 -------------------
@@ -30,7 +30,7 @@ Neo2 layout
 
 Setup
 -------------------
-Add the following to `.emacs` after installing manually or via MELPA:
+Add the following to `init.el` after installing manually or via MELPA:
 ```elisp
 (require 'xah-fly-keys)
 (xah-fly-keys-set-layout 'qwerty) ; required
@@ -62,7 +62,7 @@ The following keyboard layouts are supported:
 * 'workman
 
 ```elisp
-(xah-fly-keys 1)
+(xah-fly-keys t)
 ```
 
 Customization

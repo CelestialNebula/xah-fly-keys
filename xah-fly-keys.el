@@ -127,14 +127,11 @@
 
 ;; If you like this project, Buy Xah Emacs Tutorial http://ergoemacs.org/emacs/buy_xah_emacs_tutorial.html or make a donation. Thanks.
 
-;; HHH___________________________________________________________________
 ;;; Code:
 
 (require 'dired) ; in emacs
 (require 'dired-x) ; in emacs
 (require 'ido) ; in emacs
-
-;; HHH___________________________________________________________________
 
 (defgroup xah-fly-keys nil
   "Ergonomic modal keybinding minor mode."
@@ -156,7 +153,6 @@
   :type 'boolean
   :group 'xah-fly-keys)
 
-;; HHH___________________________________________________________________
 ;; cursor movement
 
 (defun xah-pop-local-mark-ring ()
@@ -426,7 +422,6 @@ Version 2015-03-24"
 ;;   (posix-search-backward "[ \t\n]+" nil t)
 ;;   )
 
-;; HHH___________________________________________________________________
 ;; editing commands
 
 (defun xah-copy-line-or-region ()
@@ -1745,7 +1740,6 @@ version 2016-07-17"
   (require 'rect)
   (kill-new (mapconcat 'identity (extract-rectangle @begin @end) "\n")))
 
-;; HHH___________________________________________________________________
 ;; insertion commands
 
 (defun xah-insert-date ()
@@ -2036,7 +2030,6 @@ Version 2021-01-05"
                        (format "%s %s" (car x) (cdr x))) xah-unicode-list))))
     (insert (car (split-string xStr " " t)))))
 
-;; HHH___________________________________________________________________
 ;; text selection
 
 (defun xah-select-current-block ()
@@ -2220,7 +2213,6 @@ Version 2020-11-24 2021-07-11"
     (skip-chars-forward $skipChars)
     (set-mark $p1)))
 
-;; HHH___________________________________________________________________
 ;; misc
 
 (defun xah-user-buffer-q ()
