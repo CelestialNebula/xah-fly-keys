@@ -3,7 +3,7 @@
 ;; Copyright © 2013-2021, by Xah Lee
 
 ;; Author: Xah Lee ( http://xahlee.info/ )
-;; Version: 13.19.20210715131320
+;; Version: 13.21.20210719205611
 ;; Created: 10 Sep 2013
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: convenience, emulations, vim, ergoemacs
@@ -1562,7 +1562,7 @@ Version 2017-01-11"
 If not in `dired', do nothing.
 
 URL `http://ergoemacs.org/emacs/elisp_dired_rename_space_to_underscore.html'
-Version 2020-03-03"
+Version 2016-10-04 2020-03-03"
   (interactive)
   (require 'dired-aux)
   (if (eq major-mode 'dired-mode)
@@ -1581,7 +1581,7 @@ Version 2020-03-03"
 If not in `dired', do nothing.
 
 URL `http://ergoemacs.org/emacs/elisp_dired_rename_space_to_underscore.html'
-Version 2019-11-24"
+Version 2016-10-04 2019-11-24"
   (interactive)
   (require 'dired-aux)
   (if (eq major-mode 'dired-mode)
