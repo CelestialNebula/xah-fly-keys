@@ -3,7 +3,7 @@
 ;; Copyright © 2013-2021, by Xah Lee
 
 ;; Author: Xah Lee ( http://xahlee.info/ )
-;; Version: 13.21.20210719205611
+;; Version: 13.22.20210721084754
 ;; Created: 10 Sep 2013
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: convenience, emulations, vim, ergoemacs
@@ -2945,25 +2945,23 @@ Version 2020-11-20 2021-01-31"
 When called in Elisp, if @FNAME is given, open that.
 
 URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
-Version 2019-11-04 2021-06-30"
+Version 2019-11-04 2021-07-21"
   (interactive)
-  (let* (
-         ($file-list
+  (let ($fileList $doIt )
+    (setq $fileList
           (if @fname
-              (progn (list @fname))
+              (list @fname)
             (if (string-equal major-mode "dired-mode")
                 (dired-get-marked-files)
               (list (buffer-file-name)))))
-         ($do-it-p (if (<= (length $file-list) 5)
-                       t
-                     (y-or-n-p "Open more than 5 files? "))))
-    (when $do-it-p
+    (setq $doIt (if (<= (length $fileList) 5) t (y-or-n-p "Open more than 5 files? ")))
+    (when $doIt
       (cond
        ((string-equal system-type "windows-nt")
         (mapc
          (lambda ($fpath)
            (shell-command (concat "PowerShell -Command \"Invoke-Item -LiteralPath\" " "'" (shell-quote-argument (expand-file-name $fpath )) "'")))
-         $file-list))
+         $fileList))
        ((string-equal system-type "darwin")
         (mapc
          (lambda ($fpath)
@@ -3003,7 +3001,7 @@ On Microsoft Windows, it starts cross-platform PowerShell (pwsh).
 You will need to have it installed.
 
 URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
-Version 2020-11-21 2021-07-20"
+Version 2020-11-21 2021-07-21"
   (interactive)
   (cond
    ((string-equal system-type "windows-nt")
@@ -3011,10 +3009,7 @@ Version 2020-11-21 2021-07-20"
           ($cmdstr
            (format "pwsh -Command Start-Process pwsh -WorkingDirectory %s" (shell-quote-argument default-directory))))
       ;; (start-process "" nil "powershell" "Start-Process" "powershell"  "-WorkingDirectory" default-directory)
-      (message "Runs: %s" $cmdstr)
-      (shell-command $cmdstr)
-      ;;
-      ))
+      (shell-command $cmdstr)))
    ((string-equal system-type "darwin")
     (shell-command (concat "open -a terminal " (shell-quote-argument (expand-file-name default-directory )))))
    ((string-equal system-type "gnu/linux")
