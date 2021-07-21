@@ -2572,25 +2572,23 @@ Version 2020-10-17 2021-02-24"
   "Command to call for `execute-extended-command' replacement, used by `xah-fly-M-x'.
 Value should be an Elisp symbol.")
 
-(setq xah-fly-M-x-command nil)
+(setq xah-fly-M-x-command
+      (cond
+       ((and (boundp 'xah-fly-M-x-command)
+             xah-fly-M-x-command)
+        xah-fly-M-x-command)
+       ((fboundp 'smex) 'smex)
+       ((fboundp 'helm-M-x) 'helm-M-x)
+       ((fboundp 'counsel-M-x) 'counsel-M-x)
+       (t 'execute-extended-command)))
 
 (defun xah-fly-M-x ()
   "Calls `execute-extended-command' or an alternative.
-If `xah-fly-M-x-command' is non-nil, call it, else call one of the following, in
-order: `smex', `helm-M-x', `counsel-M-x', `execute-extended-command'.
 
-Version 2020-04-09 2021-02-24"
+If `xah-fly-M-x-command' is non-nil, call it, else call one of the following, in order: `smex', `helm-M-x', `counsel-M-x', `execute-extended-command'.
+Version 2020-04-09 2021-07-20"
   (interactive)
-  (command-execute
-   (cond
-    ((and (boundp 'xah-fly-M-x-command) xah-fly-M-x-command) xah-fly-M-x-command )
-    ((fboundp 'smex) 'smex)
-    ((fboundp 'helm-M-x) 'helm-M-x)
-    ((fboundp 'counsel-M-x) 'counsel-M-x)
-    (t 'execute-extended-command))
-   nil
-   nil
-   :special))
+  (command-execute xah-fly-M-x-command nil nil :special))
 
 (defvar xah-run-current-file-before-hook nil "Hook for `xah-run-current-file'.  Before the file is run.")
 
@@ -2983,6 +2981,21 @@ Version 2019-11-04 2021-06-30"
                             (start-process "" nil "xdg-open" $fpath)))
          $file-list))))))
 
+(defvar xah-fly-terminal-emulator nil
+  "Terminal emulator for *nix platforms, used by `xah-open-in-external-app'.
+Value should be a string.")
+
+(setq xah-fly-terminal-emulator
+      (cond
+       ((string-suffix-p "gnome-terminal\n" (shell-command-to-string "which gnome-terminal") :IGNORE-CASE)
+        "gnome-terminal")
+       ((string-suffix-p "konsole\n" (shell-command-to-string "which konsole") :IGNORE-CASE)
+        "konsole")
+       ((string-suffix-p "xterm\n" (shell-command-to-string "which xterm") :IGNORE-CASE)
+        "xterm")
+       (t (message "No known terminal emulator found.")
+          nil)))
+
 (defun xah-open-in-terminal ()
   "Open the current dir in a new terminal window.
 
@@ -2990,7 +3003,7 @@ On Microsoft Windows, it starts cross-platform PowerShell (pwsh).
 You will need to have it installed.
 
 URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
-Version 2020-11-21 2021-03-01"
+Version 2020-11-21 2021-07-20"
   (interactive)
   (cond
    ((string-equal system-type "windows-nt")
@@ -3006,8 +3019,10 @@ Version 2020-11-21 2021-03-01"
     (shell-command (concat "open -a terminal " (shell-quote-argument (expand-file-name default-directory )))))
    ((string-equal system-type "gnu/linux")
     (let ((process-connection-type nil))
-      (start-process "" nil "x-terminal-emulator"
-                     (concat "--working-directory=" default-directory))))))
+      (start-process "" nil xah-fly-terminal-emulator)))
+   ((string-equal system-type "berkeley-unix")
+    (let ((process-connection-type nil))
+      (start-process "" nil xah-fly-terminal-emulator)))))
 
 (defun xah-next-window-or-frame ()
   "Switch to next window or frame.
