@@ -1,9 +1,9 @@
-;;; xah-fly-keys.el --- Ergonomic modal keybinding minor mode. -*- lexical-binding: t; coding: utf-8; byte-compile-dynamic: t; -*-
+;;; xah-fly-keys.el --- Ergonomic modal keybinding minor mode. -*- lexical-binding: t; coding: utf-8; -*-
 
 ;; Copyright © 2013-2021, by Xah Lee
 
-;; Author: Xah Lee ( http://xahlee.info/ )
-;; Version: 13.22.20210721090857
+;; Author: Xah Lee (http://xahlee.info/)
+;; Version: 13.22.20210721092224
 ;; Created: 10 Sep 2013
 ;; Package-Requires: ((emacs "24.1"))
 ;; Keywords: convenience, emulations, vim, ergoemacs
@@ -131,6 +131,7 @@
 
 (require 'dired) ; in emacs
 (require 'dired-x) ; in emacs
+
 ;; FIXME
 ;; (require 'ido) ; in emacs
 
@@ -414,13 +415,12 @@ Version 2015-03-24"
   (interactive)
   (re-search-backward "\\.+\\|,+\\|;+" nil t))
 
-;; (defun goto-point-min ()
-;;   "Goto the beginning of buffer.
-;; This is different from `beginning-of-buffer'
-;; because that marks the previous position."
-;;   (interactive)
-;;   (goto-char (point-min))
-;; )
+(defun xah-fly-keys-goto-point-min ()
+  "Goto the beginning of buffer.
+This is different from `beginning-of-buffer'
+because that marks the previous position."
+  (interactive)
+  (goto-char (point-min)))
 
 ;; (defun goto-point-max ()
 ;;   "Goto the end of buffer.
@@ -1255,7 +1255,7 @@ Version 2018-12-16 2021-07-06"
             (replace-match "\n" )))))))
 
 (defun xah-reformat-lines (&optional @width)
-  "Reformat current text block or selection into short lines or 1 long line.
+  "Reformat current text block or selection into 1 long line or short lines.
 
 When called for the first time, change to one long line.  Second call change it
 to multiple short lines.  Repeated call toggles.
@@ -1804,59 +1804,45 @@ Version 2020-09-07"
                ;; (ido-completing-read
                (completing-read
                 "Style:"
-                '(
-                  "1 → 2018-04-12 Thursday"
+                '("1 → 2018-04-12 Thursday"
                   "2 → 20180412224611"
                   "3 → 2018-04-12T22:46:11-07:00"
                   "4 → 2018-04-12 22:46:11-07:00"
                   "5 → Thursday, April 12, 2018"
                   "6 → Thu, Apr 12, 2018"
                   "7 → April 12, 2018"
-                  "8 → Apr 12, 2018"
-                  )) 0 1))
-           0
-           )))
+                  "8 → Apr 12, 2018"))
+               0 1))
+           0)))
     (when (use-region-p) (delete-region (region-beginning) (region-end)))
     (insert
      (cond
-      ((= $style 0)
-       ;; "2016-10-10"
+      ((= $style 0)                     ; "2018-04-12"
        (format-time-string "%Y-%m-%d"))
-      ((= $style 1)
-       ;; "2018-04-12 Thursday"
-
+      ((= $style 1)                     ; "2018-04-12 Thursday"
        (format-time-string "%Y-%m-%d %A"))
-      ((= $style 2)
-       ;; "20180412224015"
+      ((= $style 2)                     ; "20180412224015"
        (replace-regexp-in-string ":" "" (format-time-string "%Y%m%d%T")))
-      ((= $style 3)
+      ((= $style 3)                     ; "2018-04-12T22:45:26-07:00"
        (concat
         (format-time-string "%Y-%m-%dT%T")
-        (funcall (lambda ($x) (format "%s:%s" (substring $x 0 3) (substring $x 3 5))) (format-time-string "%z")))
-       ;; "2018-04-12T22:45:26-07:00"
-       )
-      ((= $style 4)
+        (funcall (lambda ($x)
+                   (format "%s:%s" (substring $x 0 3) (substring $x 3 5)))
+                 (format-time-string "%z"))))
+      ((= $style 4)                     ; "2018-04-12 22:46:11-07:00"
        (concat
         (format-time-string "%Y-%m-%d %T")
-        (funcall (lambda ($x) (format "%s:%s" (substring $x 0 3) (substring $x 3 5))) (format-time-string "%z")))
-       ;; "2018-04-12 22:46:11-07:00"
-       )
-      ((= $style 5)
-       (format-time-string "%A, %B %d, %Y")
-       ;; "Thursday, April 12, 2018"
-       )
-      ((= $style 6)
-       (format-time-string "%a, %b %d, %Y")
-       ;; "Thu, Apr 12, 2018"
-       )
-      ((= $style 7)
-       (format-time-string "%B %d, %Y")
-       ;; "April 12, 2018"
-       )
-      ((= $style 8)
-       (format-time-string "%b %d, %Y")
-       ;; "Apr 12, 2018"
-       )
+        (funcall (lambda ($x)
+                   (format "%s:%s" (substring $x 0 3) (substring $x 3 5)))
+                 (format-time-string "%z"))))
+      ((= $style 5)                     ; "Thursday, April 12, 2018"
+       (format-time-string "%A, %B %d, %Y"))
+      ((= $style 6)                     ; "Thu, Apr 12, 2018"
+       (format-time-string "%a, %b %d, %Y"))
+      ((= $style 7)                     ; "April 12, 2018"
+       (format-time-string "%B %d, %Y"))
+      ((= $style 8)                     ; "Apr 12, 2018"
+       (format-time-string "%b %d, %Y"))
       (t
        (format-time-string "%Y-%m-%d"))))))
 
@@ -2086,7 +2072,8 @@ Version 2021-01-05"
          (completing-read
           "Insert:" (mapcar
                      (lambda (x)
-                       (format "%s %s" (car x) (cdr x))) xah-unicode-list))))
+                       (format "%s %s" (car x) (cdr x)))
+                     xah-unicode-list))))
     (insert (car (split-string xStr " " t)))))
 
 ;; text selection
@@ -2549,21 +2536,23 @@ Version 2020-10-17 2021-02-24"
 (defvar xah-fly-M-x-command nil
   "Command to call for `execute-extended-command' replacement, used by `xah-fly-M-x'.
 Value should be an Elisp symbol.")
-
 (setq xah-fly-M-x-command
       (cond
        ((and (boundp 'xah-fly-M-x-command)
              xah-fly-M-x-command)
         xah-fly-M-x-command)
-       ((fboundp 'smex) 'smex)
-       ((fboundp 'helm-M-x) 'helm-M-x)
        ((fboundp 'counsel-M-x) 'counsel-M-x)
+       ((fboundp 'helm-M-x) 'helm-M-x)
+       ((fboundp 'smex) 'smex)
        (t 'execute-extended-command)))
 
 (defun xah-fly-M-x ()
   "Calls `execute-extended-command' or an alternative.
 
-If `xah-fly-M-x-command' is non-nil, call it, else call one of the following, in order: `smex', `helm-M-x', `counsel-M-x', `execute-extended-command'.
+If `xah-fly-M-x-command' is non-nil, call it, else call one of the
+following, in order: `counsel-M-x', `helm-M-x', `smex',
+`execute-extended-command'.
+
 Version 2020-04-09 2021-07-20"
   (interactive)
   (command-execute xah-fly-M-x-command nil nil :special))
@@ -2945,23 +2934,22 @@ Version 2019-11-04 2021-07-21"
          (lambda ($fpath)
            (shell-command
             (concat "open " (shell-quote-argument $fpath))))
-         $file-list))
+         $fileList))
        ((string-equal system-type "gnu/linux")
         (mapc
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath)))
-         $file-list))
+         $fileList))
        ((string-equal system-type "berkeley-unix")
         (mapc
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath)))
-         $file-list))))))
+         $fileList))))))
 
-(defvar xah-fly-terminal-emulator nil
+(defvar xah-fly-keys-terminal-emulator nil
   "Terminal emulator for *nix platforms, used by `xah-open-in-external-app'.
 Value should be a string.")
-
-(setq xah-fly-terminal-emulator
+(setq xah-fly-keys-terminal-emulator
       (cond
        ((string-suffix-p "gnome-terminal\n" (shell-command-to-string "which gnome-terminal") :IGNORE-CASE)
         "gnome-terminal")
@@ -2975,6 +2963,9 @@ Value should be a string.")
 (defun xah-open-in-terminal ()
   "Open the current dir in a new terminal window.
 
+On *nix platforms (not Mac), `xah-fly-keys-terminal-emulator'
+sets which terminal emulator to use.
+
 On Microsoft Windows, it starts cross-platform PowerShell (pwsh).
 You will need to have it installed.
 
@@ -2982,20 +2973,20 @@ URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
 Version 2020-11-21 2021-07-21"
   (interactive)
   (cond
+   ((string-equal system-type "berkeley-unix")
+    (let ((process-connection-type nil))
+      (start-process "" nil xah-fly-keys-terminal-emulator)))
+   ((string-equal system-type "darwin")
+    (shell-command (concat "open -a terminal " (shell-quote-argument (expand-file-name default-directory )))))
+   ((string-equal system-type "gnu/linux")
+    (let ((process-connection-type nil))
+      (start-process "" nil xah-fly-keys-terminal-emulator)))
    ((string-equal system-type "windows-nt")
     (let ((process-connection-type nil)
           ($cmdstr
            (format "pwsh -Command Start-Process pwsh -WorkingDirectory %s" (shell-quote-argument default-directory))))
       ;; (start-process "" nil "powershell" "Start-Process" "powershell"  "-WorkingDirectory" default-directory)
-      (shell-command $cmdstr)))
-   ((string-equal system-type "darwin")
-    (shell-command (concat "open -a terminal " (shell-quote-argument (expand-file-name default-directory )))))
-   ((string-equal system-type "gnu/linux")
-    (let ((process-connection-type nil))
-      (start-process "" nil xah-fly-terminal-emulator)))
-   ((string-equal system-type "berkeley-unix")
-    (let ((process-connection-type nil))
-      (start-process "" nil xah-fly-terminal-emulator)))))
+      (shell-command $cmdstr)))))
 
 (defun xah-next-window-or-frame ()
   "Switch to next window or frame.
@@ -3025,7 +3016,7 @@ Version 2017-01-29"
   (interactive)
   (describe-function major-mode))
 
-;; key maps for conversion
+;; keymaps for conversion
 
 (defvar xah--dvorak-to-adnw-kmap
   '(("'" . "k")
@@ -3035,23 +3026,17 @@ Version 2017-01-29"
     ("y" . "ä")
 
     ("f" . "v")
-    ("g" . "g")
-    ("c" . "c")
     ("r" . "l")
     ("l" . "j")
     ("/" . "f")
 
     ("a" . "h")
     ("o" . "i")
-    ("e" . "e")
     ("u" . "a")
     ("i" . "o")
 
-    ("d" . "d")
     ("h" . "t")
     ("t" . "r")
-    ("n" . "n")
-    ("s" . "s")
     ("-" . "ß")
 
     (";" . "x")
@@ -3060,11 +3045,8 @@ Version 2017-01-29"
     ("k" . ",")
     ("x" . "q")
 
-    ("b" . "b")
     ("m" . "p")
-    ("w" . "w")
-    ("v" . "m")
-    ("z" . "z"))
+    ("v" . "m"))
   "An alist, each element is of the form (\"e\" . \"d\").
 First char is Dvorak, second is corresponding ADNW.
 
@@ -3209,8 +3191,6 @@ are assumed to be the same.")
     ("'" . "b")
     ("," . "é")
     ("." . "o")
-    ("p" . "p")
-    ("y" . "y")
 
     ("f" . "^"); NOTE: this is a dead key
     ("g" . "v")
@@ -3221,9 +3201,7 @@ are assumed to be the same.")
     ("=" . "z")
     ("\\" . "ç")
 
-    ("a" . "a")
     ("o" . "u")
-    ("e" . "e")
     ("u" . "i")
     ("i" . ",")
 
@@ -3272,7 +3250,6 @@ are assumed to be the same.")
     ("r" . "l")
     ("l" . "j")
 
-    ("a" . "a")
     ("o" . "u")
     ("e" . "i")
     ("u" . "e")
@@ -3448,7 +3425,6 @@ are assumed to be the same.")
   '(("'" . "q")
     ("," . "w")
     ("." . "f")
-    ("p" . "p")
     ("y" . "g")
 
     ("f" . "j")
@@ -3457,7 +3433,6 @@ are assumed to be the same.")
     ("r" . "y")
     ("l" . ";")
 
-    ("a" . "a")
     ("o" . "r")
     ("e" . "s")
     ("u" . "t")
@@ -3476,7 +3451,6 @@ are assumed to be the same.")
     ("x" . "b")
 
     ("b" . "k")
-    ("m" . "m")
     ("w" . ",")
     ("v" . ".")
     ("z" . "/"))
@@ -3490,7 +3464,6 @@ are assumed to be the same.")
   '(("'" . "q")
     ("," . "w")
     ("." . "f")
-    ("p" . "p")
     ("y" . "b")
 
     ("f" . "j")
@@ -3499,7 +3472,6 @@ are assumed to be the same.")
     ("r" . "y")
     ("l" . ";")
 
-    ("a" . "a")
     ("o" . "r")
     ("e" . "s")
     ("u" . "t")
@@ -3532,7 +3504,6 @@ are assumed to be the same.")
   '(("'" . "q")
     ("," . "w")
     ("." . "f")
-    ("p" . "p")
     ("y" . "b")
 
     ("f" . "j")
@@ -3541,7 +3512,6 @@ are assumed to be the same.")
     ("r" . "y")
     ("l" . ";")
 
-    ("a" . "a")
     ("o" . "r")
     ("e" . "s")
     ("u" . "t")
@@ -3627,35 +3597,25 @@ are assumed to be the same.")
     ("," . ".")
     ("." . "o")
     ("p" . ",")
-    ("y" . "y")
 
     ("f" . "v")
-    ("g" . "g")
-    ("c" . "c")
     ("r" . "l")
     ("l" . "ß")
 
     ("a" . "h")
     ("o" . "a")
-    ("e" . "e")
     ("u" . "i")
     ("i" . "u")
 
-    ("d" . "d")
     ("h" . "t")
     ("t" . "r")
-    ("n" . "n")
-    ("s" . "s")
 
     (";" . "x")
-    ("q" . "q")
     ("j" . "ä")
     ("k" . "ü")
     ("x" . "ö")
 
-    ("b" . "b")
     ("m" . "p")
-    ("w" . "w")
     ("v" . "m")
     ("z" . "j"))
   "An alist, each element is of the form (\"e\" . \"d\").
@@ -3699,8 +3659,6 @@ are assumed to be the same.")
     ("k" . "p")
     ("x" . "z")
 
-    ("b" . "b")
-    ("m" . "m")
     ("w" . ",")
     ("v" . ".")
     ("z" . "j"))
@@ -3723,9 +3681,7 @@ are assumed to be the same.")
     ("r" . "l")
     ("l" . ";")
 
-    ("a" . "a")
     ("o" . "s")
-    ("e" . "e")
     ("u" . "t")
     ("i" . "g")
 
@@ -3742,7 +3698,6 @@ are assumed to be the same.")
     ("x" . "b")
 
     ("b" . "p")
-    ("m" . "m")
     ("w" . ",")
     ("v" . ".")
     ("z" . "/"))
@@ -3832,7 +3787,6 @@ are assumed to be the same.")
     ("x" . "b")
 
     ("b" . "n")
-    ("m" . "m")
     ("w" . ",")
     ("v" . ".")
     ("z" . "/"))
@@ -3860,7 +3814,6 @@ are assumed to be the same.")
     ("/" . "'")
     ("=" . "[")
 
-    ("a" . "a")
     ("o" . "s")
     ("e" . "d")
     ("u" . "f")
@@ -3880,7 +3833,6 @@ are assumed to be the same.")
     ("x" . "b")
 
     ("b" . "n")
-    ("m" . "m")
     ("w" . ",")
     ("v" . ".")
     ("z" . ";"))
@@ -3908,7 +3860,6 @@ are assumed to be the same.")
     ("/" . "å")
     ("=" . "¨") ; NOTE: this is a dead key
 
-    ("a" . "a")
     ("o" . "s")
     ("e" . "d")
     ("u" . "f")
@@ -3928,7 +3879,6 @@ are assumed to be the same.")
     ("x" . "b")
 
     ("b" . "n")
-    ("m" . "m")
     ("w" . ",")
     ("v" . ".")
     ("z" . "-"))
@@ -3956,7 +3906,6 @@ are assumed to be the same.")
     ("/" . "ü")
     ("=" . "+")
 
-    ("a" . "a")
     ("o" . "s")
     ("e" . "d")
     ("u" . "f")
@@ -3976,7 +3925,6 @@ are assumed to be the same.")
     ("x" . "b")
 
     ("b" . "n")
-    ("m" . "m")
     ("w" . ",")
     ("v" . ".")
     ("z" . "-"))
@@ -3999,7 +3947,6 @@ are assumed to be the same.")
     ("r" . "p")
     ("l" . ";")
 
-    ("a" . "a")
     ("o" . "s")
     ("e" . "h")
     ("u" . "t")
@@ -4059,7 +4006,8 @@ If nil, automatically set to \"dvorak\"."
           (const :tag "Workman" workman))
   :group 'xah-fly-keys
   :set (lambda (@layout-var @new-layout)
-         ;; Only reload xah-fly-keys if it was already loaded and the new layout is different:
+         ;; Only reload xah-fly-keys if it was already loaded and
+         ;; the new layout is different:
          (if (and (featurep 'xah-fly-keys)
                   (not (eq @new-layout (symbol-value @layout-var))))
              (progn
@@ -4641,7 +4589,7 @@ minor modes loaded later may override bindings in this map.")
    ("a" . mark-whole-buffer)
    ("b" . end-of-buffer)
    ("c" . xah-fly-c-keymap)
-   ("d" . beginning-of-buffer)
+   ("d" . xah-fly-keys-goto-point-min)
    ("e" . xah-fly-e-keymap)
    ("f" . xah-search-current-word)
    ("g" . xah-close-current-buffer)
@@ -4956,7 +4904,6 @@ URL `http://ergoemacs.org/misc/ergoemacs_vi_mode.html'"
   :global t
   :lighter " ∑flykeys"
   :keymap xah-fly-insert-map
-  (delete-selection-mode 1)
   (if xah-fly-keys
       ;; Construction:
       (progn
